@@ -1,5 +1,4 @@
-# shop_app
-
+# Personal Expenses
 A new Flutter project.
 
 ## Getting Started
