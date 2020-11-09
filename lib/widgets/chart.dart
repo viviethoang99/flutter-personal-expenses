@@ -46,7 +46,7 @@ class Chart extends StatelessWidget {
     return Container(
       child: Card(
         elevation: 8,
-        margin: EdgeInsets.all(20),
+        margin: const EdgeInsets.all(20),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: groupedTransactionValues.map((data) {

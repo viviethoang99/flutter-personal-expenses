@@ -17,7 +17,7 @@ class AdaptiveFlatButton extends StatelessWidget {
               alignment: Alignment.centerRight,
               child: FlatButton(
                 onPressed: handler,
-                child: Text('Choose Date'),
+                child: const Text('Choose Date'),
                 textColor: Theme.of(context).primaryColor,
               ),
             ),
@@ -27,7 +27,7 @@ class AdaptiveFlatButton extends StatelessWidget {
               alignment: Alignment.centerRight,
               child: FlatButton(
                 onPressed: handler,
-                child: Text('Choose Date'),
+                child: const Text('Choose Date'),
                 textColor: Theme.of(context).primaryColor,
               ),
             ),
