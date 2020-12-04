@@ -1,8 +1,8 @@
-### **Flutter Personal Expenses App - Learn Flutter**
+## **Flutter Personal Expenses App - Learn Flutter**
 
 A Flutter Demo App To Record Personal Expenses And See Trends In Spending Over Time Via A Chart.
 
-#Features:
+Features:
 
 1. Switch in real-time between light mode and dark mode - persists preference across app restarts.
 2. Responsive to landscape and portrait modes.
