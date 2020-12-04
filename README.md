@@ -1,15 +1,19 @@
-# Personal Expenses
-A new Flutter project.
+### **Flutter Personal Expenses App - Learn Flutter**
 
-## Getting Started
+A Flutter Demo App To Record Personal Expenses And See Trends In Spending Over Time Via A Chart.
 
-This project is a starting point for a Flutter application.
+#Features:
 
-A few resources to get you started if this is your first Flutter project:
+1. Switch in real-time between light mode and dark mode - persists preference across app restarts.
+2. Responsive to landscape and portrait modes.
+3. When in landscape mode, can switch between showing chart or expenses list.
+4. Adaptive interface that changes buttons and toolbar depending on whether the user is on Android or IOS.
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+# Demo
+![](assets/images/demo.png)
+# Code Dependencies
+If you wish to run this code on your local machine, Flutter needs to be installed.
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+See instructions [here](https://flutter.dev/docs/get-started/install "here") for your operating system.
+
+###End
