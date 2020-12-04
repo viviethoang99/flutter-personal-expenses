@@ -13,7 +13,8 @@ class TransactionList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       child: transactions.isEmpty
-          ? LayoutBuilder(builder: (ctx, constraints) {
+          ? LayoutBuilder(
+          builder: (ctx, constraints) {
               return Column(
                 children: <Widget>[
                   Center(
@@ -36,7 +37,8 @@ class TransactionList extends StatelessWidget {
           : ListView.builder(
               itemCount: transactions.length,
               itemBuilder: (ctx, index) {
-                return TransactionItem(transaction: transactions[index], deleteTx: deleteTx);
+                return TransactionItem(
+                    transaction: transactions[index], deleteTx: deleteTx);
               },
             ),
     );

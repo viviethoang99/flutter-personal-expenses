@@ -1,6 +1,8 @@
 import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:dynamic_theme/dynamic_theme.dart';
 
 import './widgets/transaction_list.dart';
 import './models/transaction.dart';
@@ -12,34 +14,40 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter App',
-      theme: ThemeData(
-          primarySwatch: Colors.purple,
-          accentColor: Colors.amber,
-          errorColor: Colors.red,
-          fontFamily: 'Quicksand',
-          textTheme: ThemeData.light().textTheme.copyWith(
-                headline6: TextStyle(
-                  fontFamily: 'Open Sans',
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-                button: TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-          appBarTheme: AppBarTheme(
+    return DynamicTheme(
+        defaultBrightness: Brightness.light,
+        data: (brightness) => ThemeData(
+            primarySwatch: Colors.purple,
+            accentColor: Colors.amber,
+            // errorColor: Colors.red,
+            brightness: brightness,
+            fontFamily: 'Quicksand',
             textTheme: ThemeData.light().textTheme.copyWith(
                   headline6: TextStyle(
                     fontFamily: 'Open Sans',
-                    fontSize: 20,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
+                  button: TextStyle(
+                    color: Colors.white,
+                  ),
                 ),
-          )),
-      home: MyHomePage(),
-    );
+            appBarTheme: AppBarTheme(
+              textTheme: ThemeData.light().textTheme.copyWith(
+                    headline6: TextStyle(
+                      fontFamily: 'OpenSans',
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+            )),
+        themedWidgetBuilder: (context, theme) {
+          return MaterialApp(
+            title: 'Flutter App',
+            theme: theme,
+            home: MyHomePage(),
+          );
+        });
   }
 }
 
@@ -48,8 +56,22 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   final List<Transaction> _userTransactions = [];
+
+  void toggleLightDarkTheme() {
+    if (Theme.of(context).brightness == Brightness.dark) {
+      DynamicTheme.of(context).setThemeData(ThemeData(
+          brightness: Brightness.light,
+          primarySwatch: Colors.purple,
+          accentColor: Colors.amber));
+    } else {
+      DynamicTheme.of(context).setThemeData(ThemeData(
+          brightness: Brightness.dark,
+          primarySwatch: Colors.purple,
+          accentColor: null));
+    }
+  }
 
   bool _showChart = false;
 
@@ -80,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _startAddNewTransaction(BuildContext ctx) {
     showModalBottomSheet(
       context: ctx,
-      builder: (_) {
+      builder: (context) {
         return GestureDetector(
           child: NewTransaction(_addNewTransaction),
           onTap: () {},
@@ -92,18 +114,24 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _deleteTransaction(String id) {
     setState(() {
-      _userTransactions.removeWhere((ctx) => ctx.id == id);
+      _userTransactions.removeWhere((tx) => tx.id == id);
     });
   }
 
-  List<Widget> _buildLandscapeContent(MediaQueryData mediaQuery,
-      PreferredSizeWidget appBar, Widget txtWidgetList) {
+  List<Widget> _buildLandscapeContent(
+    MediaQueryData mediaQuery,
+    PreferredSizeWidget appBar,
+    Widget txtWidgetList,
+  ) {
     return [
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          const Text('Show Chart'),
-          Switch(
+          Text(
+            'Show Chart',
+            style: Theme.of(context).textTheme.bodyText1,
+          ),
+          Switch.adaptive(
             activeColor: Theme.of(context).accentColor,
             value: _showChart,
             onChanged: (val) {
@@ -152,7 +180,20 @@ class _MyHomePageState extends State<MyHomePage> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 GestureDetector(
-                  child: Icon(CupertinoIcons.add),
+                  child: Icon(
+                    CupertinoIcons.brightness_solid,
+                    color: Colors.black,
+                  ),
+                  onTap: () => toggleLightDarkTheme(),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                GestureDetector(
+                  child: Icon(
+                    CupertinoIcons.add_circled,
+                    color: Colors.black,
+                  ),
                   onTap: () => _startAddNewTransaction(context),
                 )
               ],
@@ -164,7 +205,17 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             actions: <Widget>[
               IconButton(
-                icon: Icon(Icons.add),
+                icon: Icon(Icons.brightness_4, color: Colors.black),
+                onPressed: () => toggleLightDarkTheme(),
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              IconButton(
+                icon: Icon(
+                  Icons.add_circle,
+                  color: Colors.black,
+                ),
                 onPressed: () => _startAddNewTransaction(context),
               )
             ],
@@ -172,36 +223,35 @@ class _MyHomePageState extends State<MyHomePage> {
     final txtWidgetList = Container(
         height: (mediaQuery.size.height - appBar.preferredSize.height) * 0.7,
         child: TransactionList(_userTransactions, _deleteTransaction));
-    final pageBody = Scaffold(
-      appBar: appBar,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              if (isLandsScape)
-                ..._buildLandscapeContent(mediaQuery, appBar, txtWidgetList),
-              if (!isLandsScape)
-                ..._buildPortraitContent(mediaQuery, appBar, txtWidgetList),
-            ],
-          ),
+    final pageBody = SafeArea(
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            if (isLandsScape)
+              ..._buildLandscapeContent(mediaQuery, appBar, txtWidgetList),
+            if (!isLandsScape)
+              ..._buildPortraitContent(mediaQuery, appBar, txtWidgetList),
+          ],
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      floatingActionButton: Platform.isIOS
-          ? Container()
-          : FloatingActionButton(
-              child: Icon(Icons.add),
-              onPressed: () {
-                _startAddNewTransaction(context);
-              },
-            ),
     );
     return Platform.isIOS
-        ? CupertinoPageScaffold(child: pageBody)
+        ? CupertinoPageScaffold(
+            child: pageBody,
+            navigationBar: appBar,
+          )
         : Scaffold(
             appBar: appBar,
             body: pageBody,
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+            floatingActionButton: Platform.isIOS
+                ? Container()
+                : FloatingActionButton(
+                    child: Icon(Icons.add),
+                    onPressed: () => _startAddNewTransaction(context),
+                  ),
           );
   }
 }
